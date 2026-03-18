@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengecekan Gula Darah Nengsih</title>
+    <style>
+        :root {
+            --bg: #0d0d0d;
+            --container: #1a1a1a;
+            --accent: #ff0055;
+            --text: #e0e0e0;
+            --input-bg: #262626;
+            --border: #333;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: var(--container);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 0, 85, 0.1);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border);
+            box-sizing: border-box;
+        }
+
+        h2 { 
+            color: var(--accent); 
+            text-align: center; 
+            margin-top: 0; 
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .input-group { margin-bottom: 15px; }
+
+        label { 
+            display: block; 
+            margin-bottom: 6px; 
+            font-size: 0.85rem; 
+            font-weight: 600;
+            color: #aaa;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: var(--input-bg);
+            border: 1px solid #444;
+            color: white;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            text-transform: uppercase;
+        }
+
+        button:hover { 
+            background: #cc0044; 
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 85, 0.3);
+        }
+
+        .footer { 
+            font-size: 11px; 
+            text-align: center; 
+            margin-top: 20px; 
+            opacity: 0.4;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🩸 Pengecekan Gula Darah Nengsih</h2>
+    
+    <div class="input-group">
+        <label>Nama Pasien</label>
+        <input type="text" id="nama" placeholder="Masukkan nama...">
+    </div>
+
+    <div class="input-group">
+        <label>Kadar Gula Darah (mg/dL)</label>
+        <input type="number" id="gula" placeholder="Input angka saja">
+    </div>
+
+    <div class="row">
+        <div class="input-group">
+            <label>Waktu Hari</label>
+            <select id="waktuHari">
+                <option value="Pagi">Pagi</option>
+                <option value="Siang">Siang</option>
+                <option value="Sore">Sore</option>
+                <option value="Malam">Malam</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Kondisi</label>
+            <select id="kondisi">
+                <option value="Sebelum Makan">Sebelum Makan</option>
+                <option value="Sesudah Makan">Sesudah Makan</option>
+                <option value="Puasa">Puasa</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label>Tanggal & Jam</label>
+        <input type="datetime-local" id="waktu">
+    </div>
+
+    <button onclick="simpanLaporan()">SIMPAN LAPORAN</button>
+    
+    <div class="footer">VIRWAN AI SYSTEM &copy; 2026</div>
+</div>
+
+<script>
+    // Inisialisasi waktu otomatis ke menit saat ini
+    function setWaktuDefault() {
+        const sekarang = new Date();
+        const offset = sekarang.getTimezoneOffset() * 60000;
+        const localTime = new Date(sekarang - offset).toISOString().slice(0, 16);
+        document.getElementById('waktu').value = localTime;
+    }
+    setWaktuDefault();
+
+    async function simpanLaporan() {
+        const nama = document.getElementById('nama').value.trim();
+        const gula = document.getElementById('gula').value;
+        const hari = document.getElementById('waktuHari').value;
+        const kondisi = document.getElementById('kondisi').value;
+        const tglJam = document.getElementById('waktu').value;
+
+        if (!nama || !gula || !tglJam) {
+            alert("Lengkapi semua data, Boss!");
+            return;
+        }
+
+        // Memformat tampilan Tanggal & Jam agar sangat rapi di file teks
+        const dt = new Date(tglJam);
+        const opsiTanggal = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
+        const opsiJam = { hour: '2-digit', minute: '2-digit' };
+        
+        const formatTgl = dt.toLocaleDateString('id-ID', opsiTanggal);
+        const formatJam = dt.toLocaleTimeString('id-ID', opsiJam);
+
+        const konten = `
+====================================
+      LAPORAN GULA DARAH [2026]
+====================================
+Nama Pasien : ${nama}
+Kadar Gula  : ${gula} mg/dL
+Waktu Hari  : ${hari}
+Kondisi     : ${kondisi}
+------------------------------------
+Tanggal     : ${formatTgl}
+Jam         : ${formatJam} WIB
+====================================
+Status: Tercatat via ToBlUt v1.4
+Generated: ${new Date().toLocaleString('id-ID')}
+====================================\n`;
+
+        try {
+            // Coba simpan menggunakan File System API
+            const handle = await window.showSaveFilePicker({
+                suggestedName: `Laporan_Gula_${hari}_${nama.replace(/\s+/g, '_')}.txt`,
+                types: [{
+                    description: 'Dokumen Teks',
+                    accept: {'text/plain': ['.txt']},
+                }],
+            });
+
+            const writable = await handle.createWritable();
+            await writable.write(konten);
+            await writable.close();
+            alert("BERHASIL! Data tersimpan rapi di folder pilihan.");
+        } catch (err) {
+            // Fallback download otomatis jika user cancel atau browser tidak support
+            if (err.name !== 'AbortError') {
+                const blob = new Blob([konten], { type: "text/plain" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `Gula_${hari}_${nama}.txt`;
+                link.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
